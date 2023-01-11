@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  prism-cluster-update-event-listener
+
+  Sample SAM Template for prism-cluster-update-event-listener
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    PermissionsBoundary: !Sub 'arn:aws:iam::${AWS::AccountId}:policy/base/domain-admin'
+    Timeout: 900
+
+Resources:
+  ClusterUpdatedEventHandler:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: cluster-updated-event-listener-lambda
+      Handler: com.perpetua.event.listener.ClusterUpdatedEventHandler::handleRequest
+      Runtime: java11
+      Architectures:
+        - x86_64
+      Events:
+        LambdaTrigger:
+          Type: CloudWatchEvent
+          Properties:
+            EventBusName: '{{resolve:ssm:/config/bm-document-fetcher/document-fetcher/messaging/event-bus/central-event-bus}}'
+            Pattern:
+              source:
+                - com.sellics.datastar
+              detail:
+                use-case-name:
+                  - "PRISM_CLUSTER_UPDATED"
