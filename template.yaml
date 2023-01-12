@@ -31,6 +31,12 @@ Resources:
               Action:
                 - sns:Publish
               Resource: "*"
+        - Statement:
+            - Sid: CreateSsmParam
+              Effect: Allow
+              Action:
+                - ssm:PutParameter
+              Resource: "*"
       Events:
         LambdaTrigger:
           Type: CloudWatchEvent
