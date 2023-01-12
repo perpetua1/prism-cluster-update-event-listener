@@ -1,0 +1,45 @@
+name: Deploy to Staging
+
+on: pull_request
+
+env:
+  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SAM_TEMPLATE: template.yaml
+
+  TESTING_STACK_NAME: ${{ secrets.STAGING_STACK_NAME }}
+  TESTING_PIPELINE_EXECUTION_ROLE: ${{ secrets.STAGING_DEPLOYER_ROLE }}
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: ${{ secrets.STAGING_CLOUDFORMATION_EXEC_ROLE }}
+  TESTING_ARTIFACTS_BUCKET: ${{ secrets.STAGING_S3_BUCKET }}
+  TESTING_REGION: ${{ secrets.REGION }}
+
+jobs:
+  build-and-deploy-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+      - uses: aws-actions/setup-sam@v1
+      - run: sam build --template ${SAM_TEMPLATE} --use-container
+
+      - name: Assume the testing pipeline user role
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.TESTING_REGION }}
+          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
+          role-session-name: pr-deployment-staging
+          role-duration-seconds: 3600
+          role-skip-session-tagging: true
+
+      - name: Deploy to feature stack in the testing account
+        shell: bash
+        run: |
+          sam deploy --stack-name ${TESTING_STACK_NAME} \
+            --capabilities CAPABILITY_IAM \
+            --resolve-s3 \
+            --region ${TESTING_REGION} \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
