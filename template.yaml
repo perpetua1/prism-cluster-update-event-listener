@@ -22,7 +22,7 @@ Resources:
         - x86_64
       Environment:
         Variables:
-          CLUSTER_UPDATED_TOPIC: '{{resolve:ssm:/config/prism-service/aws/sns/prism-cluster-updated"}}'
+          CLUSTER_UPDATED_TOPIC: '{{resolve:ssm:/config/prism-service/aws/sns/prism-cluster-updated}}'
       Policies:
         - Statement:
             - Sid: ClusterUpdatedSns
