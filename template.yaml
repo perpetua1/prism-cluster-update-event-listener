@@ -42,3 +42,9 @@ Resources:
               detail:
                 use-case-name:
                   - "PRISM_CLUSTER_UPDATED"
+  ClusterUpdatedEventHandlerSsm:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: /config/cluster-updated-event-handler/function/arn
+      Type: String
+      Value: !GetAtt ClusterUpdatedEventHandler.Arn
