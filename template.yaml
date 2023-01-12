@@ -9,7 +9,7 @@ Description: >
 Globals:
   Function:
     PermissionsBoundary: !Sub 'arn:aws:iam::${AWS::AccountId}:policy/base/domain-admin'
-    Timeout: 900
+    Timeout: 20
 
 Resources:
   ClusterUpdatedEventHandler:
@@ -20,6 +20,16 @@ Resources:
       Runtime: java11
       Architectures:
         - x86_64
+      Environment:
+        Variables:
+          CLUSTER_UPDATED_TOPIC: '{{resolve:ssm:/config/prism-service/aws/sns/prism-cluster-updated"}}'
+      Policies:
+        - Statement:
+            - Sid: ClusterUpdatedSns
+              Effect: Allow
+              Action:
+                - sns:Publish
+              Resource: "*"
       Events:
         LambdaTrigger:
           Type: CloudWatchEvent
