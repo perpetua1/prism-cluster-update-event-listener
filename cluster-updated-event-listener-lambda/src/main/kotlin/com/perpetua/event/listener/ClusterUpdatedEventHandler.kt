@@ -35,5 +35,4 @@ class ClusterUpdatedEventHandler : RequestStreamHandler {
 
     private fun getSnsClient(): AmazonSNS = AmazonSNSClientBuilder.standard().withRegion(Regions.EU_WEST_1)
         .withCredentials(DefaultAWSCredentialsProviderChain()).build()
-
 }
