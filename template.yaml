@@ -41,4 +41,4 @@ Resources:
                 - com.sellics.datastar
               detail:
                 use-case-name:
-                  - "PRISM_CLUSTER_UPDATED_TEST"
+                  - "PRISM_CLUSTER_UPDATED"
