@@ -20,10 +20,10 @@ Resources:
       Runtime: java11
       Architectures:
         - x86_64
+      MemorySize: 512
       Environment:
         Variables:
           CLUSTER_UPDATED_TOPIC: '{{resolve:ssm:/config/prism-service/aws/sns/prism-cluster-updated}}'
-          JAVA_TOOL_OPTIONS: -XX:MetaspaceSize=512m
       Policies:
         - Statement:
             - Sid: ClusterUpdatedSns
