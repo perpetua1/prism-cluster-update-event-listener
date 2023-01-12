@@ -38,7 +38,7 @@ jobs:
         run: |
           sam deploy --stack-name ${TESTING_STACK_NAME} \
             --capabilities CAPABILITY_IAM \
-            --region ${TESTING_REGION} \
+            --resolve-s3 \
             --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
             --no-confirm-changeset \
             --no-fail-on-empty-changeset \
