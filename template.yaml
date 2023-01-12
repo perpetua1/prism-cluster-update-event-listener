@@ -23,7 +23,7 @@ Resources:
       Environment:
         Variables:
           CLUSTER_UPDATED_TOPIC: '{{resolve:ssm:/config/prism-service/aws/sns/prism-cluster-updated}}'
-          JAVA_TOOL_OPTIONS: -XX:MinMetaspaceFreeRatio=10
+          JAVA_TOOL_OPTIONS: -XX:MaxMetaspaceSize=3200m
       Policies:
         - Statement:
             - Sid: ClusterUpdatedSns
