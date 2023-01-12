@@ -7,10 +7,14 @@ import com.amazonaws.services.lambda.runtime.RequestStreamHandler
 import com.amazonaws.services.sns.AmazonSNS
 import com.amazonaws.services.sns.AmazonSNSClientBuilder
 import com.amazonaws.services.sns.model.PublishRequest
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.InputStream
 import java.io.OutputStream
 
 class ClusterUpdatedEventHandler : RequestStreamHandler {
+
+    private val log: Logger = LogManager.getLogger(ClusterUpdatedEventHandler::class.java)
 
     companion object {
         val CLUSTER_UPDATED_TOPIC_ARN: String = System.getenv("CLUSTER_UPDATED_TOPIC")
@@ -18,6 +22,7 @@ class ClusterUpdatedEventHandler : RequestStreamHandler {
 
     override fun handleRequest(inputStream: InputStream, outputStream: OutputStream, context: Context) {
         val messageAsString = inputStream.bufferedReader().use { it.readText() }
+        log.info("Event $messageAsString received on ClusterUpdatedEventHandler")
         getSnsClient().publish(getPublishRequest(messageAsString))
     }
 
